@@ -53,6 +53,7 @@ func main() {
 	go handlepacket.ShowInfo()
 
 	//统计固定时间内数据量,起一个线程每隔一段时间去重置
+	go handlepacket.ResetDataSize()
 
 	//实时获取数据包，并存放只哈希表
 	for packet := range packetSource.Packets() {

@@ -3,6 +3,7 @@ package handlepacket
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/whiskey-wei/network_analysis/conf"
@@ -98,4 +99,58 @@ func SaveInfo(info *PacketInfo, path string) {
 			info.Protocol, info.SrcIP, info.DstIP, info.SrcPort, info.DstPort, info.DataSize, info.TimeStamp))
 	}
 
+}
+
+//信息打印
+func ShowInfo() {
+	for {
+		cmd := exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		time.Sleep(time.Second * 2)
+		cmd.Run()
+		fmt.Printf("%v%18v%20v%20v%20v%20v%20v%vs)%20v\n", "Proto", "SrcIP", "DstIP", "SrcPort", "DstPort", "State", "PreSize(", conf.CatchTime, "NowSize")
+		for i := 0; i < 150; i++ {
+			fmt.Printf("-")
+		}
+		fmt.Printf("\n")
+		//fmt.Println("Proto\tSrcIP\tDstIP\tSrcPort\tDstPort\tState")
+		SumMap.Range(printInfo)
+	}
+}
+
+func printInfo(k, v interface{}) bool {
+	mapVal, ok := v.(*MapValue)
+	if !ok {
+		return false
+	}
+	printVal(mapVal)
+	return true
+}
+
+func printVal(mapVal *MapValue) {
+	nodeVal, ok := mapVal.List.Front().Value.(*PacketInfo)
+	if ok {
+		HashMux.Lock()
+		fmt.Printf("%v%20v%20v%20v%20v%20v%20vB%20vB\n", nodeVal.Protocol, nodeVal.SrcIP, nodeVal.DstIP, nodeVal.SrcPort, nodeVal.DstPort, nodeVal.State, mapVal.PreSize, mapVal.NowSize)
+		HashMux.Unlock()
+	}
+}
+
+func ResetDataSize() {
+	for {
+		time.Sleep(time.Duration(conf.CatchTime) * time.Second)
+		SumMap.Range(resetDataSize)
+	}
+}
+
+func resetDataSize(k, v interface{}) bool {
+	mapVal, ok := v.(*MapValue)
+	if !ok {
+		return false
+	}
+	HashMux.Lock()
+	mapVal.PreSize = mapVal.NowSize
+	mapVal.NowSize = 0
+	HashMux.Unlock()
+	return true
 }

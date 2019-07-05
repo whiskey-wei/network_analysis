@@ -43,13 +43,14 @@ func GetInfo(packet gopacket.Packet) {
 		info.SrcPort = uint16(tcpInfo.SrcPort)
 		info.DstPort = uint16(tcpInfo.DstPort)
 		info.Protocol = "tcp"
-		if tcpInfo.SYN == true { //SYN-SENT
+		if tcpInfo.SYN == true && tcpInfo.ACK == true { //SYN-SENT
 			info.State = "SYN-SENT"
-		} else if tcpInfo.SYN == true && tcpInfo.ACK == true {
+		} else if tcpInfo.SYN == true {
 			info.State = "SYN-RECV"
 		} else if tcpInfo.FIN == true {
 			//将连接从链表清除
 			TcpMap.Del(info)
+			SaveInfo(&info, conf.TcpFilePath)
 			return
 		} else {
 			info.State = "ESTABLISH"

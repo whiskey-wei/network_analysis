@@ -39,29 +39,30 @@
     用到的哈希存储模型
 
 ## 项目设计
-* 数据结构
-    * PacketInfo:	//数据包的存储模型  
+### 数据结构
+     PacketInfo:	//数据包的存储模型  
 		Protocol  		string 	//协议类型  
 		State   		string	//TCP状态  
-		SrcMAC   	net.HardwareAddr  
-		DstMAC   	net.HardwareAddr  
+		SrcMAC   	        net.HardwareAddr  
+		DstMAC   	        net.HardwareAddr  
 		SrcIP     		net.IP  
 		DstIP     		net.IP  
 		SrcPort   		uint16  
 		DstPort   		uint16  
-		TimeStamp 	int64 	//时间戳  
-		DataSize  	int   		//这个包的大小  
+		TimeStamp 	        int64 	//时间戳  
+		DataSize  	        int   		//这个包的大小  
 		Seq       		uint32  
 		Ack       		uint32  
 	
-	* MapValue：	//哈希表中的值  
-		List			list.List	//链表，节点内容为PacketInfo  
+	 MapValue：	//哈希表中的值  
+		List		list.List	//链表，节点内容为PacketInfo  
 		PreSize		int	//上一个时间段总共的数据包大小  
 		NowSize		int	//当前时间段的数据包大小  
-    * BaseMap:		//哈希表  
+     BaseMap:		//哈希表  
 		sync.Map		//标准库中线程安全的Map，存储的值为MapValue  
 		Add(info *PacketInfo)	//添加数据包  
 		Del(info *PacketInfo)	//删除  
 
-## 总体流程
+### 总体流程
 ![design](./static/design.png)
+* 

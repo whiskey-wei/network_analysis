@@ -21,7 +21,9 @@ type PacketInfo struct {
 }
 
 type MapValue struct {
-	List    list.List
-	PreSize int
-	NowSize int //在一定时间内的包的总大小记录，会被其他线程修改
+	List     list.List
+	PreSize  int
+	NowSize  int //在一定时间内的包的总大小记录，会被其他线程修改
+	PreCount int
+	NowCount int
 }

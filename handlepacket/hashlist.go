@@ -20,6 +20,7 @@ func (m *BaseMap) Add(info *PacketInfo) {
 		mapVal := &MapValue{}
 		mapVal.List.PushFront(info)
 		mapVal.NowSize += info.DataSize
+		mapVal.NowCount++
 		HashMux.Unlock()
 		m.Store(key, mapVal)
 	} else {
@@ -30,6 +31,7 @@ func (m *BaseMap) Add(info *PacketInfo) {
 		HashMux.Lock()
 		mapVal.List.PushFront(info)
 		mapVal.NowSize += info.DataSize
+		mapVal.NowCount++
 		HashMux.Unlock()
 	}
 }

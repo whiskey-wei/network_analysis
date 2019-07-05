@@ -108,8 +108,8 @@ func ShowInfo() {
 		cmd.Stdout = os.Stdout
 		time.Sleep(time.Second * 2)
 		cmd.Run()
-		fmt.Printf("%v%18v%20v%20v%20v%20v%20v%vs)%20v\n", "Proto", "SrcIP", "DstIP", "SrcPort", "DstPort", "State", "PreSize(", conf.CatchTime, "NowSize")
-		for i := 0; i < 150; i++ {
+		fmt.Printf("%v%18v%20v%15v%15v%15v%15v%vs)%15v%15v%vs)%15v\n", "Proto", "SrcIP", "DstIP", "SrcPort", "DstPort", "State", "PreSize(", conf.CatchTime, "NowSize", "PreCount(", conf.CatchTime, "NowCount")
+		for i := 0; i < 160; i++ {
 			fmt.Printf("-")
 		}
 		fmt.Printf("\n")
@@ -131,7 +131,10 @@ func printVal(mapVal *MapValue) {
 	nodeVal, ok := mapVal.List.Front().Value.(*PacketInfo)
 	if ok {
 		HashMux.Lock()
-		fmt.Printf("%v%20v%20v%20v%20v%20v%20vB%20vB\n", nodeVal.Protocol, nodeVal.SrcIP, nodeVal.DstIP, nodeVal.SrcPort, nodeVal.DstPort, nodeVal.State, mapVal.PreSize, mapVal.NowSize)
+		fmt.Printf("%v%20v%20v%15v%15v%15v%15vB%15vB%15v%15v\n",
+			nodeVal.Protocol, nodeVal.SrcIP, nodeVal.DstIP, nodeVal.SrcPort,
+			nodeVal.DstPort, nodeVal.State, mapVal.PreSize, mapVal.NowSize,
+			mapVal.PreCount, mapVal.NowCount)
 		HashMux.Unlock()
 	}
 }
@@ -151,6 +154,8 @@ func resetDataSize(k, v interface{}) bool {
 	HashMux.Lock()
 	mapVal.PreSize = mapVal.NowSize
 	mapVal.NowSize = 0
+	mapVal.PreCount = mapVal.NowCount
+	mapVal.NowCount = 0
 	HashMux.Unlock()
 	return true
 }
